@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dazzle Football Academy</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="Dazzle Football Academy Logo" class="logo-img">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#players">Player Profiles</a></li>
+                <li><a href="#team">Team Details</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home">
+            <div class="hero">
+                <h2>Welcome to Dazzle Football Academy</h2>
+            </div>
+            <div class="home-content">
+                <h3>About Us</h3>
+                <p>Founded in 2009, Dazzle Football Academy is committed to nurturing and promoting Nigeria’s finest young football talents. Our mission is to develop players with exceptional skills, discipline, and character, preparing them for professional careers in top clubs locally and globally. Through world-class training, mentorship, and exposure to scouts, we transform raw talent into global stars.</p>
+                <h3>Our Motto</h3>
+                <p><em>Building Future Pro</em></p>
+                <h3>Our Vision</h3>
+                <p>To be Africa’s premier football academy, shaping global stars who excel on the pitch and inspire in their communities through discipline, innovation, and passion.</p>
+                <h3>Our Statement</h3>
+                <p>At Dazzle Football Academy, we transform dreams into reality by nurturing young talent with world-class training, fostering character, and creating opportunities for success in football and beyond.</p>
+            </div>
+        </section>
+
+        <!-- Player Profiles Section -->
+        <section id="players" class="hidden">
+            <h2>Player Profiles</h2>
+            <div class="search-filter">
+                <input type="text" id="searchBar" placeholder="Search players by name, strengths, or achievements...">
+                <div class="filters">
+                    <select id="positionFilter">
+                        <option value="">All Positions</option>
+                        <option value="Goalkeeper">Goalkeeper</option>
+                        <option value="Defender">Defender</option>
+                        <option value="Midfielder">Midfielder</option>
+                        <option value="Forward">Forward</option>
+                    </select>
+                    <select id="ageFilter">
+                        <option value="">All Ages</option>
+                        <option value="16-18">16-18</option>
+                        <option value="19-21">19-21</option>
+                        <option value="22+">22+</option>
+                    </select>
+                </div>
+            </div>
+            <div id="playerList" class="player-grid">
+                <p class="placeholder">Search for players using the search bar or filters above.</p>
+            </div>
+        </section>
+
+        <!-- Team Details Section -->
+        <section id="team" class="hidden">
+            <h2>Team Details</h2>
+            <div class="team-details">
+                <div class="team-updates">
+                    <h3>Team Updates</h3>
+                    <!-- Main Updates Content -->
+                    <div class="updates-content">
+                        <h4>Current Tournaments</h4>
+                        <ul>
+                            <li>Ikeja League</li>
+                            <li>Lagos Youth Cup</li>
+                        </ul>
+                        <h4>Recent Matches</h4>
+                        <ul>
+                            <li><a href="#" class="match-link" data-match="match-1">vs. Team X: Won 2-1 (April 20, 2025)</a></li>
+                            <li><a href="#" class="match-link" data-match="match-2">vs. Team Y: Draw 1-1 (April 15, 2025)</a></li>
+                            <li><a href="#" class="match-link" data-match="match-3">vs. Team Z: Lost 0-1 (April 10, 2025)</a></li>
+                        </ul>
+                        <p>Click a match above to view stats or check back for more updates!</p>
+                    </div>
+                    <!-- Match Stats -->
+                    <div id="match-1" class="match-stats hidden">
+                        <h4>Match vs. Team X (April 20, 2025)</h4>
+                        <p><strong>Score:</strong> 2-1 (Win)</p>
+                        <p><strong>Scorers:</strong> John Doe (15'), Mike Smith (60')</p>
+                        <p><strong>Assists:</strong> Paul (15'), Alex Brown (60')</p>
+                        <p><a href="#" class="back-link" data-back="updates">Back to Updates</a></p>
+                    </div>
+                    <div id="match-2" class="match-stats hidden">
+                        <h4>Match vs. Team Y (April 15, 2025)</h4>
+                        <p><strong>Score:</strong> 1-1 (Draw)</p>
+                        <p><strong>Scorers:</strong> Alex Brown (30') / Opponent (75')</p>
+                        <p><strong>Assists:</strong> Paul (30')</p>
+                        <p><a href="#" class="back-link" data-back="updates">Back to Updates</a></p>
+                    </div>
+                    <div id="match-3" class="match-stats hidden">
+                        <h4>Match vs. Team Z (April 10, 2025)</h4>
+                        <p><strong>Score:</strong> 0-1 (Loss)</p>
+                        <p><strong>Scorers:</strong> None / Opponent (45')</p>
+                        <p><strong>Assists:</strong> None</p>
+                        <p><a href="#" class="back-link" data-back="updates">Back to Updates</a></p>
+                    </div>
+                </div>
+                <div class="team-leadership">
+                    <h3>Leadership</h3>
+                    <div class="leader">
+                        <h4>Sabintu Ayansola - First Team Coach</h4>
+                        <p>Sabintu Ayansola brings extensive coaching expertise to Dazzle, focusing on technical mastery and tactical discipline. His dedication to youth development drives our players to excel on and off the pitch.</p>
+                    </div>
+                    <div class="leader">
+                        <h4>Shameh - Team Manager</h4>
+                        <p>Shameh oversees the academy’s operations, ensuring alignment with our vision of producing world-class talent. His leadership fosters a cohesive environment for players and staff.</p>
+                    </div>
+                </div>
+                <div class="team-facilities">
+                    <h3>Facilities</h3>
+                    <div class="facility">
+                        <h4>Home Ground: Idiagbon Primary School, Ifako-Ijaiye</h4>
+                        <p>Located in Ifako-Ijaiye, Lagos, our home ground at Idiagbon Primary School is where we host competitive matches and engage with the local community.</p>
+                        <div class="map-container">
+                            <p><a href="https://maps.app.goo.gl/6dEnfyBMs1eseGz46" target="_blank">View Idiagbon Primary School on Google Maps</a></p>
+                        </div>
+                    </div>
+                    <div class="facility">
+                        <h4>Training Center: First African Church Mission Primary School, Iju Ishaga</h4>
+                        <p>Located in Iju Ishaga, Lagos, our training center at First African Church Mission Primary School provides top-tier facilities for skill development, fitness, and tactical training, fostering the growth of our players. Training sessions are held from 3:00 PM to 6:00 PM, Monday to Friday, though the schedule may vary due to matches on any day.</p>
+                        <div class="map-container">
+                            <p><a href="https://maps.app.goo.gl/t2P91FJqwke4iDBw9" target="_blank">View First African Church Mission Primary School on Google Maps</a></p>
+                        </div>
+                    </div>
+                    <div class="inquiry">
+                        <p>Interested in joining, enrolling, or sponsoring Dazzle Football Academy? <a href="#contact">Contact us</a> for more information.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="hidden">
+            <h2>Contact Us</h2>
+            <form id="contactForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+                
+                <label for="message">Message:</label>
+                <textarea id="message" required></textarea>
+                
+                <button type="submit">Submit</button>
+            </form>
+            <div class="whatsapp-links">
+                <p>Message us on WhatsApp:</p>
+                <p><a href="https://wa.me/+2348031992728" target="_blank">+2348031992728</a></p>
+                <p><a href="https://wa.me/+2348108082167" target="_blank">+2348108082167</a></p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Dazzle Football Academy. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    line-height: 1.6;
+}
+
+/* Header Styles */
+header {
+    background-color: #004aad;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    max-width: 150px;
+    height: auto;
+    display: block;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a.active, nav a:hover {
+    color: #ffd700;
+}
+
+/* Hero Section */
+.hero {
+    background: url('https://source.unsplash.com/random/1600x400/?football') no-repeat center/cover;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Home Content */
+.home-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    text-align: left;
+}
+
+.home-content h3 {
+    color: #004aad;
+    margin-bottom: 0.5rem;
+}
+
+.home-content p {
+    margin-bottom: 1rem;
+}
+
+/* Section Styles */
+section {
+    padding: 2rem;
+    text-align: center;
+}
+
+section h2 {
+    margin-bottom: 1.5rem;
+    color: #004aad;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Player Profiles */
+.search-filter {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+#searchBar {
+    padding: 0.5rem;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filters select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.player-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.player-card {
+    background: #f4f4f4;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.player-card img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.player-card .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.player-card .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.player-card h3 {
+    margin-bottom: 0.5rem;
+    color: #004aad;
+}
+
+.player-card p {
+    margin-bottom: 0.5rem;
+}
+
+.player-card ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.placeholder {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+/* Team Details */
+.team-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.team-updates, .team-leadership, .team-facilities {
+    margin-bottom: 1rem;
+}
+
+.team-updates h3, .team-updates h4, .team-leadership h3, .team-facilities h3 {
+    color: #004aad;
+    margin-bottom: 0.5rem;
+}
+
+.team-updates ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.updates-content, .match-stats {
+    background: #f4f4f4;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+.match-stats h4 {
+    color: #004aad;
+    margin-bottom: 0.5rem;
+}
+
+.match-stats p {
+    margin-bottom: 0.5rem;
+}
+
+/* Style for map links, inquiry link, WhatsApp links, match links, and back links */
+.map-container a, .inquiry a, .whatsapp-links a, .match-link, .back-link {
+    color: #004aad;
+    text-decoration: underline;
+    font-size: 1rem;
+}
+
+.map-container a:hover, .inquiry a:hover, .whatsapp-links a:hover, .match-link:hover, .back-link:hover {
+    color: #003087;
+}
+
+.leader, .facility, .inquiry {
+    background: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.leader h4, .facility h4 {
+    color: #004aad;
+    margin-bottom: 0.5rem;
+}
+
+.map-container {
+    margin-top: 0.5rem;
+    padding-bottom: 0;
+}
+
+/* WhatsApp Links */
+.whatsapp-links {
+    margin-top: 1rem;
+    text-align: left;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.whatsapp-links p {
+    margin-bottom: 0.5rem;
+}
+
+/* Contact Form */
+#contactForm {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#contactForm label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+}
+
+#contactForm input,
+#contactForm textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#contactForm button {
+    background: #004aad;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#contactForm button:hover {
+    background: #003087;
+}
+
+/* Footer */
+footer {
+    background: #004aad;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .hero h2 {
+        font-size: 1.8rem;
+    }
+
+    .search-filter {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #searchBar {
+        width: 100%;
+    }
+
+    .logo-img {
+        max-width: 120px;
+    }
+
+    .player-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-details, .home-content {
+        text-align: center;
+    }
+
+    .leader, .facility, .inquiry, .whatsapp-links, .team-updates, .updates-content, .match-stats {
+        text-align: left;
+    }
+}
