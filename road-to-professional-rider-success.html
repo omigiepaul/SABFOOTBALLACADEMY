@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Road to Professional Rider Success</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E14;
+    --surface:#121926;
+    --surface-2:#182131;
+    --surface-3:#202b40;
+    --line:#26334A;
+    --text:#EAEEF6;
+    --text-dim:#8C97AC;
+    --amber:#F5B301;
+    --amber-dim:#8a6a12;
+    --trap:#E4483F;
+    --trap-soft: rgba(228,72,63,0.20);
+    --good:#38B26A;
+    --good-soft: rgba(56,178,106,0.20);
+    --bonus:#4C7FF0;
+    --bonus-soft: rgba(76,127,240,0.20);
+    --p0:#F5B301;
+    --p1:#2FD3E0;
+    --p2:#FF5C9E;
+    --p3:#B8F24C;
+    --font-display:'Bebas Neue', sans-serif;
+    --font-body:'Manrope', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+    --radius:10px;
+    --step-ms: 170ms;
+    --jump-ms: 700ms;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(245,179,1,0.07), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 110% 10%, rgba(76,127,240,0.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:var(--font-body);}
+  button:focus-visible, .cell:focus-visible, input:focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:2px;
+  }
+  .hidden{display:none !important;}
+
+  /* ---------- App shell ---------- */
+  #app{max-width:1180px;margin:0 auto;padding:16px 16px 90px;}
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-bottom:16px;flex-wrap:wrap;
+  }
+  .brand{display:flex;flex-direction:column;gap:2px;}
+  .brand .kicker{
+    font-family:var(--font-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--amber);opacity:0.9;
+  }
+  .brand h1{
+    font-family:var(--font-display);
+    font-size:clamp(28px,5vw,40px);
+    letter-spacing:0.01em;
+    margin:0;line-height:0.95;
+    background:linear-gradient(90deg,#fff, #f5d98a 60%, var(--amber));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand .sub{font-size:12.5px;color:var(--text-dim);font-weight:600;letter-spacing:0.02em;}
+  .top-actions{display:flex;gap:8px;}
+  .btn{
+    border:1px solid var(--line);background:var(--surface-2);color:var(--text);
+    padding:9px 14px;border-radius:999px;font-weight:700;font-size:13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;transition:border-color .15s, transform .1s, background .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{border-color:var(--amber);}
+  .btn:active{transform:scale(0.97);}
+  .btn.primary{background:var(--amber);border-color:var(--amber);color:#1a1305;}
+  .btn.primary:hover{background:#ffc61a;}
+  .btn.ghost{background:transparent;}
+  .btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
+
+  main{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start;}
+  @media (max-width:880px){
+    main{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Board ---------- */
+  .board-wrap{
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    padding:14px;display:flex;flex-direction:column;gap:10px;position:relative;
+  }
+  .board-frame{
+    position:relative;width:100%;
+    max-width:680px;margin:0 auto;
+    aspect-ratio:1/1;
+  }
+  .board-grid{
+    position:absolute;inset:0;
+    display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);
+    gap:3px;
+    background:var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    z-index:1;
+  }
+  .cell{
+    position:relative;background:var(--surface-2);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:var(--font-mono);
+    cursor:default;border:none;padding:0;color:var(--text);
+    min-width:0;min-height:0;
+  }
+  .cell .num{
+    position:absolute;top:2px;left:3px;font-size:clamp(6px,1.4vw,9px);color:var(--text-dim);font-weight:600;
+  }
+  .cell .icon{font-size:clamp(9px,2.6vw,17px);line-height:1;}
+  .cell--special{cursor:pointer;}
+  .cell--special:hover{filter:brightness(1.15);}
+  .cell--good{background:var(--good-soft);box-shadow:inset 0 2px 0 0 var(--good);}
+  .cell--trap{background:var(--trap-soft);box-shadow:inset 0 2px 0 0 var(--trap);}
+  .cell--bonus{background:var(--bonus-soft);box-shadow:inset 0 2px 0 0 var(--bonus);}
+  .cell--start{background:linear-gradient(180deg, var(--surface-3), var(--surface-2));box-shadow:inset 0 0 0 1px var(--amber-dim);}
+  .cell--win{background:linear-gradient(160deg, #2b2408, var(--surface-2));box-shadow:inset 0 0 0 2px var(--amber);}
+  .cell--win .icon{font-size:clamp(12px,3.4vw,22px);filter:drop-shadow(0 0 6px rgba(245,179,1,.6));}
+
+  .path-svg{position:absolute;inset:0;z-index:2;pointer-events:none;width:100%;height:100%;}
+  .path-line{
+    fill:none;stroke:var(--amber);stroke-width:0.6;stroke-linecap:round;
+    opacity:0.4;stroke-dasharray:2.2 2;
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .path-line{animation:dashflow 26s linear infinite;}
+  }
+  @keyframes dashflow{to{stroke-dashoffset:-210;}}
+
+  .token-layer{position:absolute;inset:0;z-index:3;pointer-events:none;}
+  .token{
+    position:absolute;width:9.4%;height:9.4%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(8px,2.2vw,15px);
+    border:2px solid rgba(255,255,255,0.85);
+    box-shadow:0 2px 6px rgba(0,0,0,.5);
+    transition:left var(--step-ms) ease, top var(--step-ms) ease;
+    z-index:3;
+  }
+  .token.jumping{transition:left var(--jump-ms) cubic-bezier(.34,1.4,.64,1), top var(--jump-ms) cubic-bezier(.34,1.4,.64,1);}
+
+  /* legend strip under board */
+  .legend-strip{display:flex;flex-wrap:wrap;gap:10px 16px;font-size:11.5px;color:var(--text-dim);padding:0 2px;}
+  .legend-strip span{display:inline-flex;align-items:center;gap:5px;}
+  .legend-strip i{width:9px;height:9px;border-radius:3px;display:inline-block;}
+
+  /* ---------- Event banner ---------- */
+  .event-banner{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    width:min(92%,420px);
+    background:var(--surface-3);border:1px solid var(--line);border-left:4px solid var(--amber);
+    border-radius:12px;padding:10px 12px;z-index:20;
+    box-shadow:0 12px 30px rgba(0,0,0,.45);
+    display:flex;gap:10px;align-items:flex-start;
+  }
+  .event-banner.trap{border-left-color:var(--trap);}
+  .event-banner.good{border-left-color:var(--good);}
+  .event-banner.bonus{border-left-color:var(--bonus);}
+  .event-banner .ic{font-size:22px;line-height:1;}
+  .event-banner .body{flex:1;min-width:0;}
+  .event-banner .tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);}
+  .event-banner .ttl{font-weight:800;font-size:13.5px;margin:1px 0 2px;}
+  .event-banner .dsc{font-size:12px;color:var(--text-dim);}
+
+  /* ---------- Side panel ---------- */
+  .panel{display:flex;flex-direction:column;gap:12px;}
+  .phone-status{
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;
+    padding:9px 12px;display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--font-mono);font-size:10.5px;color:var(--text-dim);letter-spacing:.03em;
+  }
+  .phone-status .dot{width:7px;height:7px;border-radius:50%;background:var(--good);display:inline-block;margin-right:6px;box-shadow:0 0 6px var(--good);}
+
+  .players{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;}
+  .player-card{
+    display:flex;align-items:center;gap:10px;padding:8px 9px;border-radius:10px;
+    border:1px solid transparent;background:var(--surface-2);
+  }
+  .player-card.active{border-color:var(--amber);background:var(--surface-3);box-shadow:0 0 0 1px var(--amber) inset;}
+  .player-card .avatar{
+    width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:16px;border:2px solid rgba(255,255,255,.7);flex-shrink:0;
+  }
+  .player-card .info{flex:1;min-width:0;}
+  .player-card .name{font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;}
+  .player-card .name .turn-tag{font-family:var(--font-mono);font-size:9px;color:var(--bg);background:var(--amber);padding:1px 6px;border-radius:6px;letter-spacing:.05em;}
+  .player-card .stats{display:flex;gap:10px;font-family:var(--font-mono);font-size:11px;color:var(--text-dim);margin-top:2px;}
+  .player-card .stats b{color:var(--text);font-weight:600;}
+
+  .dice-area{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .turn-label{font-size:12.5px;color:var(--text-dim);text-align:center;min-height:16px;}
+  .turn-label b{color:var(--text);}
+  .die-face{
+    width:58px;height:58px;background:linear-gradient(155deg,#232f45,#141b28);
+    border:1px solid var(--line);border-radius:12px;
+    display:grid;grid-template-areas:"tl . tr" "ml mm mr" "bl . br";
+    grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;
+    padding:9px;box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .pip{width:8px;height:8px;border-radius:50%;background:transparent;justify-self:center;align-self:center;}
+  .pip.on{background:var(--amber);box-shadow:0 0 6px rgba(245,179,1,.7);}
+  .pip[data-p="tl"]{grid-area:tl;} .pip[data-p="tr"]{grid-area:tr;}
+  .pip[data-p="ml"]{grid-area:ml;} .pip[data-p="mr"]{grid-area:mr;}
+  .pip[data-p="mm"]{grid-area:mm;} .pip[data-p="bl"]{grid-area:bl;} .pip[data-p="br"]{grid-area:br;}
+  #rollBtn{width:100%;padding:12px;font-size:14.5px;border-radius:12px;}
+
+  .feed{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;
+    display:flex;flex-direction:column;gap:7px;max-height:280px;overflow-y:auto;
+  }
+  .feed h3{margin:2px 4px 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);font-family:var(--font-mono);font-weight:600;}
+  .feed-item{
+    background:var(--surface-2);border-radius:9px;padding:8px 9px;font-size:12px;line-height:1.4;
+    border-left:3px solid var(--line);color:var(--text-dim);
+    animation:slidein .25s ease;
+  }
+  .feed-item b{color:var(--text);}
+  .feed-item.trap{border-left-color:var(--trap);}
+  .feed-item.good{border-left-color:var(--good);}
+  .feed-item.bonus{border-left-color:var(--bonus);}
+  .feed-item.info{border-left-color:var(--amber-dim);}
+  @keyframes slidein{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- Modals ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;background:rgba(5,7,11,0.72);backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;z-index:100;padding:18px;
+  }
+  .modal{
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    max-width:480px;width:100%;max-height:86vh;overflow-y:auto;
+    padding:22px;position:relative;
+    box-shadow:0 30px 80px rgba(0,0,0,.55);
+  }
+  .modal h2{font-family:var(--font-display);font-size:26px;letter-spacing:.01em;margin:0 0 4px;color:var(--amber);}
+  .modal .close-x{position:absolute;top:14px;right:14px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;}
+  .field-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-family:var(--font-mono);margin:16px 0 8px;}
+  .count-row{display:flex;gap:8px;}
+  .count-btn{
+    flex:1;padding:12px 0;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);
+    color:var(--text);font-weight:700;font-size:15px;cursor:pointer;font-family:var(--font-mono);
+  }
+  .count-btn.sel{border-color:var(--amber);background:var(--surface-3);color:var(--amber);box-shadow:0 0 0 1px var(--amber) inset;}
+  .name-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .name-row .swatch{width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .name-row input{
+    flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+    color:var(--text);font-size:13.5px;font-family:var(--font-body);
+  }
+  .name-row input:focus-visible{outline:2px solid var(--amber);}
+
+  .rules-section{margin-bottom:18px;}
+  .rules-section h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);font-family:var(--font-mono);margin:0 0 8px;}
+  .rules-section p, .rules-section li{font-size:13px;color:var(--text-dim);line-height:1.55;}
+  .rules-section ul{margin:0;padding-left:18px;}
+  .legend-rows{display:flex;flex-direction:column;gap:6px;}
+  .legend-rows .row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-dim);}
+  .legend-rows i{width:16px;height:16px;border-radius:5px;flex-shrink:0;}
+  .trap-list li{color:var(--text);}
+  .trap-list b{color:var(--trap);}
+  .quote{
+    font-style:italic;border-left:3px solid var(--amber-dim);padding:2px 0 2px 12px;color:var(--text-dim);font-size:12.5px;margin:8px 0;
+  }
+  .tagline-box{
+    background:linear-gradient(135deg,#1c1608,var(--surface-2));border:1px solid var(--amber-dim);
+    border-radius:12px;padding:14px;text-align:center;margin-top:6px;
+  }
+  .tagline-box b{color:var(--amber);font-size:14px;}
+  .tagline-box .small{color:var(--text-dim);font-size:11px;margin-top:4px;font-family:var(--font-mono);letter-spacing:.04em;}
+
+  .peek-icon{font-size:32px;text-align:center;margin-bottom:6px;}
+  .peek-title{text-align:center;font-weight:800;font-size:15px;margin-bottom:4px;}
+  .peek-desc{text-align:center;font-size:13px;color:var(--text-dim);margin-bottom:10px;}
+  .peek-badge{display:block;width:fit-content;margin:0 auto;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;padding:3px 10px;border-radius:999px;}
+  .peek-badge.trap{background:var(--trap-soft);color:var(--trap);}
+  .peek-badge.good{background:var(--good-soft);color:var(--good);}
+  .peek-badge.bonus{background:var(--bonus-soft);color:var(--bonus);}
+  .peek-badge.start{background:rgba(245,179,1,.15);color:var(--amber);}
+  .peek-badge.win{background:rgba(245,179,1,.2);color:var(--amber);}
+
+  .win-trophy{font-size:56px;text-align:center;filter:drop-shadow(0 0 18px rgba(245,179,1,.6));}
+  .win-name{text-align:center;font-family:var(--font-display);font-size:30px;color:var(--amber);margin:4px 0 0;}
+  .win-sub{text-align:center;color:var(--text-dim);font-size:13px;margin-bottom:14px;}
+  .win-stats{display:flex;justify-content:center;gap:22px;margin-bottom:18px;font-family:var(--font-mono);font-size:12px;color:var(--text-dim);text-align:center;}
+  .win-stats b{display:block;color:var(--text);font-size:15px;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:8px;}
+
+  @media (prefers-reduced-motion:reduce){
+    .token{transition-duration:1ms !important;}
+    .feed-item{animation:none;}
+    .path-line{animation:none;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="top">
+    <div class="brand">
+      <span class="kicker">Powered by Push Mobile Technology</span>
+      <h1>Road to Professional<br>Rider Success</h1>
+      <span class="sub">Dispatch Rider Survival Game</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn ghost" id="rulesBtn" type="button">📋 Rules</button>
+      <button class="btn ghost" id="newGameBtn" type="button">↻ New Game</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="board-wrap">
+      <div class="board-frame" id="boardFrame">
+        <div class="board-grid" id="boardGrid"></div>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <polyline class="path-line" id="pathLine" points=""></polyline>
+        </svg>
+        <div class="token-layer" id="tokenLayer"></div>
+      </div>
+      <div class="legend-strip">
+        <span><i style="background:var(--surface-3)"></i>Normal move</span>
+        <span><i style="background:var(--good)"></i>Good habit — move forward</span>
+        <span><i style="background:var(--trap)"></i>Career trap — move back</span>
+        <span><i style="background:var(--bonus)"></i>Bonus</span>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="phone-status"><span><span class="dot"></span>PUSH MOBILE • DISPATCH LIVE</span><span id="clock">GOAL: SQ. 100</span></div>
+
+      <div class="players" id="playersList"></div>
+
+      <div class="dice-area">
+        <div class="turn-label" id="turnLabel">Set up riders to begin</div>
+        <div class="die-face" id="dieFace">
+          <span class="pip" data-p="tl"></span><span class="pip" data-p="tr"></span>
+          <span class="pip" data-p="ml"></span><span class="pip" data-p="mm"></span><span class="pip" data-p="mr"></span>
+          <span class="pip" data-p="bl"></span><span class="pip" data-p="br"></span>
+        </div>
+        <button class="btn primary" id="rollBtn" type="button" disabled>Roll Dice</button>
+      </div>
+
+      <div class="feed">
+        <h3>Dispatch Feed</h3>
+        <div id="feedList" aria-live="polite"></div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Setup modal -->
+<div class="modal-backdrop" id="setupModal">
+  <div class="modal">
+    <h2>Start Your Shift</h2>
+    <p style="color:var(--text-dim);font-size:13px;margin-top:0;">Roll dice, avoid career traps, climb on good habits — first rider to square 100 becomes a Trusted Professional Rider.</p>
+    <div class="field-label">How many riders?</div>
+    <div class="count-row" id="countRow">
+      <button class="count-btn" data-n="1">1</button>
+      <button class="count-btn sel" data-n="2">2</button>
+      <button class="count-btn" data-n="3">3</button>
+      <button class="count-btn" data-n="4">4</button>
+    </div>
+    <div class="field-label">Rider names</div>
+    <div id="nameFields"></div>
+    <button class="btn primary" id="startBtn" type="button" style="width:100%;padding:12px;border-radius:12px;margin-top:8px;">🏍️ Start Shift</button>
+  </div>
+</div>
+
+<!-- Rules modal -->
+<div class="modal-backdrop hidden" id="rulesModal">
+  <div class="modal">
+    <button class="close-x" id="rulesClose" type="button" aria-label="Close">✕</button>
+    <h2>Rider Survival Rules</h2>
+
+    <div class="rules-section">
+      <h3>How to Play</h3>
+      <ul>
+        <li>Roll the dice on your turn.</li>
+        <li>Move your token that many spaces.</li>
+        <li>Avoid career traps (bad habits) — they send you back.</li>
+        <li>Climb on good habits and bonuses — they move you forward.</li>
+        <li>Reach square 100 and win!</li>
+      </ul>
+    </div>
+
+    <div class="rules-section">
+      <h3>Legend</h3>
+      <div class="legend-rows">
+        <div class="row"><i style="background:var(--surface-3)"></i>Normal move</div>
+        <div class="row"><i style="background:var(--good)"></i>Good Habit (move forward)</div>
+        <div class="row"><i style="background:var(--trap)"></i>Career Trap (move back)</div>
+        <div class="row"><i style="background:var(--bonus)"></i>Bonus</div>
+      </div>
+    </div>
+
+    <div class="rules-section">
+      <h3>Rider Survival Checklist</h3>
+      <p>Stay reachable · Protect your bike · Manage your battery · Respect customers · Ride safely · Follow office process · Be honest · Plan ahead · Stay calm · Think long term.</p>
+    </div>
+
+    <div class="rules-section">
+      <h3>High Risk — Legal Traps</h3>
+      <ul class="trap-list">
+        <li><b>No NIPOST Licence</b> — pay ₦50,000 fine and return to square 1.</li>
+        <li><b>No MOT Paper</b> — bike impounded, return to square 20.</li>
+        <li><b>No Rider ID Card</b> — bike impounded, restart from square 10.</li>
+        <li><b>Cannot negotiate with road touts</b> — go back 8 steps.</li>
+      </ul>
+    </div>
+
+    <div class="rules-section">
+      <h3>Rider Survival Tips</h3>
+      <p>Check your bike before leaving · Charge your phone and e-bike fully · Plan your route and time · Always communicate with office · Respect customers and colleagues · Follow traffic rules · Keep your documents valid · Stay alert and be patient.</p>
+    </div>
+
+    <div class="rules-section">
+      <h3>Reality Check</h3>
+      <p class="quote">"One careless mistake can destroy one full week of hard work."</p>
+      <p class="quote">"Fast riders impress briefly. Safe riders survive longer."</p>
+      <p class="quote">"Professional riders protect both income and life."</p>
+    </div>
+
+    <div class="rules-section">
+      <h3>Why You Play</h3>
+      <p>More deliveries · More income · More trust · More respect · More opportunities · Longer career.</p>
+    </div>
+
+    <div class="rules-section">
+      <h3>Rate Yourself (after every real ride)</h3>
+      <p>On the physical board, riders self-score 1–10 on Emotional Control, Communication, Safety Discipline, Professionalism and Time Management after each shift. Worth doing on paper even while you play here.</p>
+    </div>
+
+    <div class="rules-section">
+      <h3>Play Notes</h3>
+      <p>Two small house rules used in this digital version, since the physical board doesn't spell them out: you need an <b style="color:var(--text)">exact roll</b> to land on 100 (an overshoot stays put), and landing on a space only triggers <b style="color:var(--text)">that</b> space's effect once — it won't chain into whatever is printed on the square you get sent to.</p>
+    </div>
+
+    <div class="tagline-box">
+      <b>Discipline today, Professional tomorrow, Success always!</b>
+      <div class="small">RIDE SMART · DELIVER SAFE · EARN MORE</div>
+    </div>
+  </div>
+</div>
+
+<!-- Cell peek modal -->
+<div class="modal-backdrop hidden" id="peekModal">
+  <div class="modal" style="max-width:340px;">
+    <button class="close-x" id="peekClose" type="button" aria-label="Close">✕</button>
+    <div class="peek-icon" id="peekIcon"></div>
+    <div class="peek-title" id="peekTitle"></div>
+    <div class="peek-desc" id="peekDesc"></div>
+    <span class="peek-badge" id="peekBadge"></span>
+  </div>
+</div>
+
+<!-- Win modal -->
+<div class="modal-backdrop hidden" id="winModal">
+  <div class="modal" style="text-align:center;">
+    <div class="win-trophy">🏆</div>
+    <div class="win-name" id="winName"></div>
+    <div class="win-sub">is now a Trusted Professional Rider</div>
+    <div class="win-stats">
+      <div><b id="winTurns">–</b>turns taken</div>
+      <div><b id="winMoney">–</b>final earnings</div>
+    </div>
+    <button class="btn primary" id="playAgainBtn" type="button" style="width:100%;padding:12px;border-radius:12px;">Play Again</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------------- Board geometry ---------------- */
+  var DECADE_DIR = ['asc','asc','asc','asc','asc','desc','asc','desc','asc','desc'];
+  function cellPos(n){
+    var d = Math.floor((n-1)/10);
+    var p = (n-1)%10;
+    var col = DECADE_DIR[d]==='asc' ? p : 9-p;
+    var row = 9-d;
+    return {row:row,col:col};
+  }
+  function cellPct(n){
+    var pos = cellPos(n);
+    return { x:(pos.col+0.5)*10, y:(pos.row+0.5)*10 };
+  }
+
+  /* ---------------- Board data (transcribed from the physical board) ---------------- */
+  var BOARD_DATA = {
+    1:  {type:'start', title:'First Day at Work', desc:'Your journey to becoming a Trusted Professional Rider begins here.', icon:'🏁'},
+    4:  {type:'good', target:14, title:'Fully Charged Phone + Power Bank', desc:'Move up to 14', icon:'🔋'},
+    7:  {type:'trap', target:3, title:'Low Phone Battery', desc:'You miss updates — go back to 3', icon:'🪫'},
+    11: {type:'bonus', target:13, title:'Customer Tips', desc:'You get ₦2,000 — move forward 2', icon:'💵', money:2000},
+    12: {type:'trap', target:5, title:'Fuel Finished Mid-Delivery', desc:'Go back to 5', icon:'⛽'},
+    16: {type:'good', target:29, title:'Early Customer Update', desc:'Move up to 29', icon:'💬'},
+    18: {type:'trap', target:7, title:'Ignoring Calls', desc:'Office cannot reach you — go back to 7', icon:'📵'},
+    21: {type:'trap', target:10, title:'No Rain Protection', desc:'Phone damaged — go back to 10', icon:'🌧️'},
+    22: {type:'good', target:36, title:'Wearing Safety Gear Properly', desc:'Move to 36', icon:'🪖'},
+    25: {type:'good', target:41, title:'Full Tank Before Work', desc:'Move up to 41', icon:'⛽'},
+    27: {type:'trap', target:13, title:'Wrong Delivery', desc:'Customer complaint — go back to 13', icon:'📦'},
+    32: {type:'good', target:50, title:'Proper Route Planning', desc:'Move up to 50', icon:'🗺️'},
+    33: {type:'trap', target:18, title:'Expired Documents', desc:'Stopped by police — go back to 18', icon:'🚔'},
+    38: {type:'good', target:57, title:'Double Check Package', desc:'Move up to 57', icon:'✅'},
+    39: {type:'trap', target:20, title:'Dangerous Overtaking', desc:'Near accident — go back to 20', icon:'⚠️'},
+    44: {type:'bonus', target:47, title:'Traffic Officer Assists You', desc:'Move forward 3', icon:'👮'},
+    45: {type:'trap', target:24, title:'Fighting Colleagues', desc:'Go back to 24', icon:'🥊'},
+    47: {type:'trap', target:39, title:"Can't Negotiate With Road Touts", desc:'Go back 8 steps', icon:'🙅'},
+    49: {type:'good', target:67, title:'Calm Under Pressure', desc:'Move up to 67', icon:'😌'},
+    52: {type:'trap', target:31, title:'E-Bike Battery Low', desc:'Bike shuts down — go back to 31', icon:'🔋'},
+    55: {type:'good', target:74, title:'Helping Fellow Rider', desc:'Move up to 74', icon:'🤝'},
+    58: {type:'trap', target:36, title:'Overspeeding', desc:'Damages package — go back to 36', icon:'🏍️'},
+    61: {type:'trap', target:10, title:'No Rider ID Card', desc:'Bike impounded — restart from 10', icon:'🪪'},
+    63: {type:'good', target:82, title:'Monitor E-Bike Battery Properly', desc:'Move up to 82', icon:'🔋'},
+    64: {type:'trap', target:40, title:'Poor Bike Maintenance', desc:'Go back to 40', icon:'🔧'},
+    66: {type:'bonus', target:70, title:'Office Praises Your Professionalism', desc:'Move forward 4', icon:'👍'},
+    70: {type:'good', target:89, title:'Customer Gives Positive Review', desc:'Move up to 89', icon:'⭐'},
+    71: {type:'trap', target:48, title:'Sleeping Late / Reporting Late', desc:'Go back to 48', icon:'⏰'},
+    73: {type:'trap', target:20, title:'No MOT Paper', desc:'Bike impounded — return to 20', icon:'🚚'},
+    78: {type:'trap', target:35, title:'Fake Delivery Confirmation', desc:'Customer report — go back to 35', icon:'📱'},
+    86: {type:'trap', target:60, title:'Riding Without Helmet', desc:'Go back to 60', icon:'⛑️'},
+    91: {type:'trap', target:1, title:'No NIPOST Licence', desc:'Pay ₦50,000 fine — return to 1', icon:'📄', money:-50000},
+    93: {type:'trap', target:15, title:'Drinking While Riding', desc:'Return to 15', icon:'🍺'},
+    100:{type:'win', title:'Trusted Professional Rider', desc:'You made it to the top!', icon:'🏆'}
+  };
+
+  var PLAYER_COLORS = ['#F5B301','#2FD3E0','#FF5C9E','#B8F24C'];
+  var PLAYER_ICON = '🏍️';
+
+  /* ---------------- State ---------------- */
+  var state = {
+    players: [],
+    current: 0,
+    started: false,
+    busy: false,
+    turns: 0
+  };
+
+  function wait(ms){
+    if(reduceMotion) ms = Math.min(ms, 30);
+    return new Promise(function(res){ setTimeout(res, ms); });
+  }
+  function fmtNaira(n){
+    var sign = n<0 ? '-' : '';
+    return sign + '\u20A6' + Math.abs(n).toLocaleString('en-US');
+  }
+
+  /* ---------------- DOM refs ---------------- */
+  var boardGrid = document.getElementById('boardGrid');
+  var pathLine = document.getElementById('pathLine');
+  var tokenLayer = document.getElementById('tokenLayer');
+  var boardFrame = document.getElementById('boardFrame');
+  var playersList = document.getElementById('playersList');
+  var turnLabel = document.getElementById('turnLabel');
+  var rollBtn = document.getElementById('rollBtn');
+  var dieFace = document.getElementById('dieFace');
+  var feedList = document.getElementById('feedList');
+
+  var setupModal = document.getElementById('setupModal');
+  var countRow = document.getElementById('countRow');
+  var nameFields = document.getElementById('nameFields');
+  var startBtn = document.getElementById('startBtn');
+
+  var rulesModal = document.getElementById('rulesModal');
+  var rulesBtn = document.getElementById('rulesBtn');
+  var rulesClose = document.getElementById('rulesClose');
+
+  var peekModal = document.getElementById('peekModal');
+  var peekClose = document.getElementById('peekClose');
+  var peekIcon = document.getElementById('peekIcon');
+  var peekTitle = document.getElementById('peekTitle');
+  var peekDesc = document.getElementById('peekDesc');
+  var peekBadge = document.getElementById('peekBadge');
+
+  var winModal = document.getElementById('winModal');
+  var winName = document.getElementById('winName');
+  var winTurns = document.getElementById('winTurns');
+  var winMoney = document.getElementById('winMoney');
+  var playAgainBtn = document.getElementById('playAgainBtn');
+  var newGameBtn = document.getElementById('newGameBtn');
+
+  /* ---------------- Build board (static) ---------------- */
+  function buildBoard(){
+    boardGrid.innerHTML = '';
+    for(var n=1;n<=100;n++){
+      var pos = cellPos(n);
+      var data = BOARD_DATA[n];
+      var div = document.createElement('div');
+      div.className = 'cell';
+      div.style.gridColumn = (pos.col+1);
+      div.style.gridRow = (pos.row+1);
+      div.dataset.n = n;
+
+      var numSpan = document.createElement('span');
+      numSpan.className = 'num';
+      numSpan.textContent = n;
+      div.appendChild(numSpan);
+
+      if(data){
+        div.classList.add('cell--special');
+        if(data.type==='good') div.classList.add('cell--good');
+        else if(data.type==='trap') div.classList.add('cell--trap');
+        else if(data.type==='bonus') div.classList.add('cell--bonus');
+        else if(data.type==='start') div.classList.add('cell--start');
+        else if(data.type==='win') div.classList.add('cell--win');
+
+        var icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = data.icon;
+        div.appendChild(icon);
+
+        div.setAttribute('title', data.title + ' — ' + data.desc);
+        div.setAttribute('tabindex','0');
+        div.setAttribute('role','button');
+        div.setAttribute('aria-label', 'Square '+n+': '+data.title+'. '+data.desc);
+        div.addEventListener('click', function(e){
+          openPeek(Number(e.currentTarget.dataset.n));
+        });
+        div.addEventListener('keydown', function(e){
+          if(e.key==='Enter' || e.key===' '){ e.preventDefault(); openPeek(Number(e.currentTarget.dataset.n)); }
+        });
+      }
+      boardGrid.appendChild(div);
+    }
+
+    // path line points
+    var pts = [];
+    for(var i=1;i<=100;i++){
+      var c = cellPct(i);
+      pts.push(c.x.toFixed(2)+','+c.y.toFixed(2));
+    }
+    pathLine.setAttribute('points', pts.join(' '));
+  }
+
+  /* ---------------- Tokens ---------------- */
+  function buildTokens(){
+    tokenLayer.innerHTML = '';
+    state.players.forEach(function(p, idx){
+      var el = document.createElement('div');
+      el.className = 'token';
+      el.style.background = p.color;
+      el.textContent = PLAYER_ICON;
+      tokenLayer.appendChild(el);
+      p.el = el;
+      setTokenVisual(p);
+    });
+  }
+  function offsetForIndex(idx, total){
+    if(total<=1) return {dx:0,dy:0};
+    var spread = 2.1;
+    var layout = [
+      [{dx:0,dy:0}],
+      [{dx:-spread,dy:0},{dx:spread,dy:0}],
+      [{dx:-spread,dy:-spread*0.6},{dx:spread,dy:-spread*0.6},{dx:0,dy:spread*0.8}],
+      [{dx:-spread,dy:-spread},{dx:spread,dy:-spread},{dx:-spread,dy:spread},{dx:spread,dy:spread}]
+    ];
+    var arr = layout[Math.min(total,4)-1];
+    return arr[idx] || {dx:0,dy:0};
+  }
+  function setTokenVisual(p){
+    var samePos = state.players.filter(function(pl){return pl.pos===p.pos;});
+    var idx = samePos.indexOf(p);
+    var off = offsetForIndex(idx, samePos.length);
+    var c = cellPct(p.pos);
+    p.el.style.left = (c.x+off.dx)+'%';
+    p.el.style.top = (c.y+off.dy)+'%';
+  }
+  function refreshAllTokenVisuals(){
+    state.players.forEach(setTokenVisual);
+  }
+
+  /* ---------------- Players panel ---------------- */
+  function renderPlayers(){
+    playersList.innerHTML = '';
+    state.players.forEach(function(p, idx){
+      var card = document.createElement('div');
+      card.className = 'player-card' + (state.started && idx===state.current ? ' active' : '');
+      var avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      avatar.style.background = p.color;
+      avatar.textContent = PLAYER_ICON;
+      card.appendChild(avatar);
+
+      var info = document.createElement('div');
+      info.className = 'info';
+      var nameDiv = document.createElement('div');
+      nameDiv.className = 'name';
+      nameDiv.textContent = p.name;
+      if(state.started && idx===state.current){
+        var tag = document.createElement('span');
+        tag.className = 'turn-tag';
+        tag.textContent = 'TURN';
+        nameDiv.appendChild(tag);
+      }
+      info.appendChild(nameDiv);
+
+      var stats = document.createElement('div');
+      stats.className = 'stats';
+      stats.innerHTML = 'SQ <b>'+p.pos+'</b> &nbsp; ' + fmtNaira(p.money);
+      info.appendChild(stats);
+
+      card.appendChild(info);
+      playersList.appendChild(card);
+    });
+  }
+
+  /* ---------------- Feed ---------------- */
+  function addFeed(html, variant){
+    var item = document.createElement('div');
+    item.className = 'feed-item' + (variant ? ' '+variant : '');
+    item.innerHTML = html;
+    feedList.insertBefore(item, feedList.firstChild);
+    while(feedList.children.length > 14){
+      feedList.removeChild(feedList.lastChild);
+    }
+  }
+
+  /* ---------------- Event banner ---------------- */
+  var bannerTimer = null;
+  function showBanner(data){
+    var old = boardFrame.querySelector('.event-banner');
+    if(old) old.remove();
+    var b = document.createElement('div');
+    b.className = 'event-banner ' + data.type;
+    b.innerHTML =
+      '<div class="ic">'+data.icon+'</div>'+
+      '<div class="body">'+
+        '<div class="tag">Push Mobile · now</div>'+
+        '<div class="ttl">'+data.title+'</div>'+
+        '<div class="dsc">'+data.desc+'</div>'+
+      '</div>';
+    boardFrame.appendChild(b);
+    if(bannerTimer) clearTimeout(bannerTimer);
+    bannerTimer = setTimeout(function(){
+      b.style.transition = 'opacity .35s ease, transform .35s ease';
+      b.style.opacity = '0';
+      b.style.transform = 'translate(-50%,-8px)';
+      setTimeout(function(){ b.remove(); }, 380);
+    }, 1600);
+  }
+
+  /* ---------------- Dice ---------------- */
+  var PIP_MAP = {
+    1:['mm'], 2:['tl','br'], 3:['tl','mm','br'],
+    4:['tl','tr','bl','br'], 5:['tl','tr','mm','bl','br'],
+    6:['tl','tr','ml','mr','bl','br']
+  };
+  function setDie(value){
+    var pips = dieFace.querySelectorAll('.pip');
+    var active = PIP_MAP[value] || [];
+    pips.forEach(function(p){
+      p.classList.toggle('on', active.indexOf(p.dataset.p) !== -1);
+    });
+  }
+  async function animateRoll(finalValue){
+    var cycles = reduceMotion ? 1 : 8;
+    for(var i=0;i<cycles;i++){
+      setDie(1+Math.floor(Math.random()*6));
+      await wait(55);
+    }
+    setDie(finalValue);
+  }
+
+  /* ---------------- Movement ---------------- */
+  async function stepMove(p, from, to){
+    for(var pos=from+1; pos<=to; pos++){
+      p.pos = pos;
+      refreshAllTokenVisuals();
+      renderPlayers();
+      await wait(reduceMotion ? 20 : 170);
+    }
+  }
+  async function jumpMove(p, to){
+    p.el.classList.add('jumping');
+    p.pos = to;
+    refreshAllTokenVisuals();
+    renderPlayers();
+    await wait(reduceMotion ? 30 : 700);
+    p.el.classList.remove('jumping');
+  }
+
+  /* ---------------- Turn flow ---------------- */
+  function updateTurnLabel(){
+    if(!state.started){ turnLabel.textContent = 'Set up riders to begin'; return; }
+    var p = state.players[state.current];
+    turnLabel.innerHTML = '<b style="color:'+p.color+'">'+p.name+'</b>\u2019s turn — tap Roll Dice';
+  }
+
+  async function takeTurn(){
+    if(state.busy || !state.started) return;
+    state.busy = true;
+    rollBtn.disabled = true;
+
+    var p = state.players[state.current];
+    var roll = 1 + Math.floor(Math.random()*6);
+    await animateRoll(roll);
+    state.turns++;
+    addFeed('🎲 <b>'+p.name+'</b> rolled a <b>'+roll+'</b>', 'info');
+
+    var dest = p.pos + roll;
+    if(dest > 100){
+      addFeed('🚫 <b>'+p.name+'</b> needs an exact roll to finish — stays on '+p.pos+'.', 'info');
+      await wait(500);
+      endTurn();
+      return;
+    }
+
+    await stepMove(p, p.pos, dest);
+
+    var data = BOARD_DATA[dest];
+    if(data && (data.type==='good' || data.type==='trap' || data.type==='bonus')){
+      showBanner(data);
+      var variant = data.type;
+      var verb = data.type==='trap' ? '⬇️ sent back to' : '⬆️ jumped to';
+      addFeed('<span style="font-size:15px">'+data.icon+'</span> <b>'+p.name+'</b>: '+data.title+' — '+verb+' <b>'+data.target+'</b>', variant);
+      if(data.money){
+        p.money += data.money;
+        addFeed((data.money>0 ? '💰 +':'💸 ') + fmtNaira(data.money) + ' for <b>'+p.name+'</b>', variant);
+      }
+      renderPlayers();
+      await wait(1000);
+      await jumpMove(p, data.target);
+    } else if(data && data.type==='win'){
+      // handled by win check below
+    }
+
+    renderPlayers();
+
+    if(p.pos === 100){
+      await wait(350);
+      finishGame(p);
+      return;
+    }
+
+    endTurn();
+  }
+
+  function endTurn(){
+    state.current = (state.current+1) % state.players.length;
+    renderPlayers();
+    updateTurnLabel();
+    state.busy = false;
+    rollBtn.disabled = false;
+  }
+
+  function finishGame(winner){
+    state.started = false;
+    state.busy = true;
+    rollBtn.disabled = true;
+    addFeed('🏆 <b>'+winner.name+'</b> reached square 100 and became a Trusted Professional Rider!', 'good');
+    winName.textContent = winner.name;
+    winTurns.textContent = state.turns;
+    winMoney.textContent = fmtNaira(winner.money);
+    winModal.classList.remove('hidden');
+  }
+
+  /* ---------------- Setup modal ---------------- */
+  var selectedCount = 2;
+  function renderNameFields(){
+    nameFields.innerHTML = '';
+    for(var i=0;i<selectedCount;i++){
+      var row = document.createElement('div');
+      row.className = 'name-row';
+      var sw = document.createElement('div');
+      sw.className = 'swatch';
+      sw.style.background = PLAYER_COLORS[i];
+      sw.textContent = PLAYER_ICON;
+      row.appendChild(sw);
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.maxLength = 18;
+      input.placeholder = 'Rider '+(i+1);
+      input.id = 'nameInput'+i;
+      row.appendChild(input);
+      nameFields.appendChild(row);
+    }
+  }
+  countRow.addEventListener('click', function(e){
+    var btn = e.target.closest('.count-btn');
+    if(!btn) return;
+    selectedCount = Number(btn.dataset.n);
+    countRow.querySelectorAll('.count-btn').forEach(function(b){ b.classList.toggle('sel', b===btn); });
+    renderNameFields();
+  });
+  renderNameFields();
+
+  startBtn.addEventListener('click', function(){
+    var players = [];
+    for(var i=0;i<selectedCount;i++){
+      var input = document.getElementById('nameInput'+i);
+      var name = (input && input.value.trim()) || ('Rider '+(i+1));
+      players.push({ name:name, color:PLAYER_COLORS[i], pos:1, money:0, el:null });
+    }
+    state.players = players;
+    state.current = 0;
+    state.started = true;
+    state.busy = false;
+    state.turns = 0;
+    feedList.innerHTML = '';
+    buildTokens();
+    renderPlayers();
+    updateTurnLabel();
+    rollBtn.disabled = false;
+    setDie(1);
+    setupModal.classList.add('hidden');
+    addFeed('🏍️ Shift started — good luck out there!', 'info');
+  });
+
+  /* ---------------- Rules modal ---------------- */
+  rulesBtn.addEventListener('click', function(){ rulesModal.classList.remove('hidden'); });
+  rulesClose.addEventListener('click', function(){ rulesModal.classList.add('hidden'); });
+  rulesModal.addEventListener('click', function(e){ if(e.target===rulesModal) rulesModal.classList.add('hidden'); });
+
+  /* ---------------- Peek modal ---------------- */
+  function openPeek(n){
+    var data = BOARD_DATA[n];
+    if(!data) return;
+    peekIcon.textContent = data.icon;
+    peekTitle.textContent = 'Square '+n+': '+data.title;
+    peekDesc.textContent = data.desc;
+    peekBadge.className = 'peek-badge ' + data.type;
+    var labelMap = {good:'Good Habit', trap:'Career Trap', bonus:'Bonus', start:'Start', win:'Goal'};
+    peekBadge.textContent = labelMap[data.type] || data.type;
+    peekModal.classList.remove('hidden');
+  }
+  peekClose.addEventListener('click', function(){ peekModal.classList.add('hidden'); });
+  peekModal.addEventListener('click', function(e){ if(e.target===peekModal) peekModal.classList.add('hidden'); });
+
+  /* ---------------- Win / New game ---------------- */
+  function resetToSetup(){
+    winModal.classList.add('hidden');
+    state.started = false;
+    state.busy = false;
+    turnLabel.textContent = 'Set up riders to begin';
+    rollBtn.disabled = true;
+    setupModal.classList.remove('hidden');
+  }
+  playAgainBtn.addEventListener('click', resetToSetup);
+  newGameBtn.addEventListener('click', resetToSetup);
+
+  /* ---------------- Roll button + keyboard ---------------- */
+  rollBtn.addEventListener('click', takeTurn);
+  document.addEventListener('keydown', function(e){
+    if((e.code==='Space' || e.code==='Enter') && !rollBtn.disabled && state.started && !state.busy){
+      var modalOpen = !rulesModal.classList.contains('hidden') || !peekModal.classList.contains('hidden') ||
+                       !setupModal.classList.contains('hidden') || !winModal.classList.contains('hidden');
+      if(modalOpen) return;
+      var activeTag = document.activeElement && document.activeElement.tagName;
+      if(activeTag==='INPUT' || activeTag==='BUTTON' || activeTag==='TEXTAREA') return;
+      e.preventDefault();
+      takeTurn();
+    }
+  });
+
+  window.addEventListener('resize', refreshAllTokenVisuals);
+
+  /* ---------------- Init ---------------- */
+  buildBoard();
+  setDie(1);
+})();
+</script>
+</body>
+</html>
